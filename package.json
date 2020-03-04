@@ -1,0 +1,30 @@
+{
+  "name": "doichain",
+  "version": "0.0.1",
+  "description": "A js-Doichain library. The goal is to fully cover the Doichain protocoll",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \\\"Error: no test specified\\\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Doichain/js-doichain.git"
+  },
+  "keywords": [
+    "Doichain",
+    "blockchain",
+    "double",
+    "opt",
+    "ins",
+    "DOI",
+    "Doicoin",
+    "Email",
+    "marketing"
+  ],
+  "author": "Nico Krause",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Doichain/js-doichain/issues"
+  },
+  "homepage": "https://github.com/Doichain/js-doichain#readme"
+}
