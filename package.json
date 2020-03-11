@@ -1,6 +1,6 @@
 {
   "name": "doichain",
-  "version": "0.0.4",
+  "version": "0.0.9",
   "description": "A js-Doichain library. The goal is to fully cover the Doichain protocoll",
   "main": "index.js",
   "scripts": {
@@ -35,6 +35,8 @@
   },
   "dependencies": {
     "bip39": "^3.0.2",
+    "bitcoinjs-lib": "^5.1.7",
+    "browser-or-node": "^1.2.1",
     "hdkey": "^1.1.1"
   }
 }

@@ -1,3 +1,2 @@
-export const printHello = () => {
-	return 'hello'
-}
+import * as network from './lib/network'
+export {network }
