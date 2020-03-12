@@ -16,9 +16,11 @@ import {createDoichainWalletFromHdKey,noEmailError} from "../lib/createDoichainW
 import {getAddress} from "../lib/getAddress"
 import {changeNetwork, DEFAULT_NETWORK, DOICHAIN_REGTEST,DOICHAIN_TESTNET,DOICHAIN} from "../lib/network"
 import {fundWallet} from "../lib/fundWallet";
+import {listTransactions} from "../lib/listTransactions"
+import {listUnspent} from "../lib/listUnspent";
 
 describe('js-doichain', function(){
-
+  this.timeout(0);
   describe('basic doichain functions', function(){
     it('should create a new mnemonic seed phrase', function () {
       const mnemonic = generateMnemonic()
@@ -47,7 +49,7 @@ describe('js-doichain', function(){
 
       const wallet = createDoichainWalletFromHdKey(hdKey,'alice@ci-doichain.org',DOICHAIN)
       // bitcoin testnet P2PKH addresses start with a 'm' or 'n'
-      chai.assert.strictEqual(wallet.addresses[0].address.startsWith('M') || wallet.addresses[0].address.startsWith('N'),true)
+      chai.assert.strictEqual(wallet.addresses[0].address.startsWith('D') || wallet.addresses[0].address.startsWith('N'),true)
       chai.expect(wallet.addresses[0].address).to.have.length(34)
       chai.expect(wallet.addresses[0].address.substring(0,1)).to.be.uppercase
     })
@@ -56,45 +58,32 @@ describe('js-doichain', function(){
       const mnemonic = "balance blanket camp festival party robot social stairs noodle piano copy drastic"
       const hdKey = createHdKeyFromMnemonic(mnemonic)
       const wallet = createDoichainWalletFromHdKey(hdKey,'alice@ci-doichain.org',DOICHAIN_TESTNET)
-      chai.assert.strictEqual(wallet.addresses[0].address.startsWith('m') || wallet.addresses[0].address.startsWith('n'),true)
+      chai.assert.strictEqual(wallet.addresses[0].address.startsWith('d') || wallet.addresses[0].address.startsWith('n'),true)
       chai.expect(wallet.addresses[0].address).to.have.length(34)
       chai.expect(wallet.addresses[0].address.substring(0,1)).to.not.be.uppercase
     })
 
-    it('should create a new Doichain address for a regtest wallet ', function () {
+    it('should create a new Doichain address for a regtest wallet ', async () => {
       changeNetwork('regtest')
       const mnemonic = "balance blanket camp festival party robot social stairs noodle piano copy drastic"
       const hdKey = createHdKeyFromMnemonic(mnemonic)
       const wallet = createDoichainWalletFromHdKey(hdKey,'alice@ci-doichain.org',DEFAULT_NETWORK)
-      chai.assert.strictEqual(wallet.addresses[0].address.startsWith('m') || wallet.addresses[0].address.startsWith('n'),true)
+      chai.assert.strictEqual(wallet.addresses[0].address.startsWith('d') || wallet.addresses[0].address.startsWith('n'),true)
       chai.expect(wallet.addresses[0].address).to.have.length(34)
       chai.expect(wallet.addresses[0].address.substring(0,1)).to.not.be.uppercase
-      fundWallet(wallet.addresses[0].address)
       const doi = 10
-      //sendDoicoinToAddress()
-
-    })
-
-    it('should fund a new regtest wallet ', function () {
-      const address = undefined
+      const funding = await fundWallet(wallet.addresses[0].address,doi)
+      console.log('funding',funding)
+      const wif = funding.data.wif
+      const address = funding.data.address
       chai.expect(address).to.have.length(34)
-      chai.expect(address.substring(0,1).to.be.uppercase)
+      chai.expect(address.substring(0,1)).to.not.be.uppercase
+      const unspent = await listUnspent(address)
+      console.log(unspent)
+      const transactions = await listTransactions(address)
+      console.log(transactions)
     })
 
-    it('should get all transactinos for a wallet', function () {
-      const transactions = undefined
-      chai.expect(transactions).to.be.an('array')
-    })
-
-    it('should get all transactinos for an address', function () {
-      const transactions = undefined
-      chai.expect(transactions).to.be.an('array')
-    })
-
-    it('should create a new Doichain change address in wallet', function () {
-      const transactions = undefined
-      chai.expect(transactions).to.be.an('array')
-    })
   })
 
 });
