@@ -37,6 +37,7 @@
     "bip39": "^3.0.2",
     "bitcoinjs-lib": "^5.1.7",
     "browser-or-node": "^1.2.1",
+    "crypto-js": "^4.0.0",
     "hdkey": "^1.1.1",
     "node-fetch": "^2.6.0"
   }

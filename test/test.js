@@ -20,6 +20,11 @@ import {listTransactions} from "../lib/listTransactions"
 import {listUnspent} from "../lib/listUnspent";
 import {getBalanceOfWallet} from "../lib/getBalanceOfWallet";
 import {createNewWallet} from "../lib/createNewWallet";
+import {encryptAES} from "../lib/encryptAES";
+import {decryptAES} from "../lib/decryptAES";
+
+const SEEDPHRASE = "balance blanket camp festival party robot social stairs noodle piano copy drastic"
+const PASSWORD = "julianAssange2020"
 
 describe('js-doichain', function(){
   this.timeout(0);
@@ -94,13 +99,20 @@ describe('js-doichain', function(){
      // console.log("transactions",transactions)
     })
 
-    xit('should check the full balance of a wallets derivation path ', async () => {
+    it('should check the full balance of a wallets derivation path ', async () => {
       changeNetwork('regtest')
       const mnemonic = "refuse brush romance together undo document tortoise life equal trash sun ask"
       const hdKey = createHdKeyFromMnemonic(mnemonic)
       const balance = await getBalanceOfWallet(hdKey,'m/0/0/0')
       console.log('balance of ',balance)
       chai.assert.isAtLeast(balance.balance,1,"should be at least 1")
+    })
+
+    it('encrypt and decrypt seed phrase', function () {
+      const encryptedSeedPhrase = encryptAES(SEEDPHRASE, PASSWORD)
+      chai.assert.isAbove(encryptedSeedPhrase.length,0,"seed phrase not encrypted")
+      const decryptedSeedPhrase = decryptAES(encryptedSeedPhrase, PASSWORD)
+      chai.assert.equal(decryptedSeedPhrase,SEEDPHRASE,"seed phrase not decrypted")
     })
 
   })
