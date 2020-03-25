@@ -1,2 +1,16 @@
 import * as network from './lib/network'
-export {network }
+import * as getAddress from './lib/getAddress'
+import {createHdKeyFromMnemonic} from "./lib/createHdKeyFromMnemonic"
+import {restoreDoichainWalletFromHdKey} from "./lib/restoreDoichainWalletFromHdKey"
+import {listTransactions} from "./lib/listTransactions"
+import {listUnspent} from "./lib/listUnspent"
+import {getBalanceOfWallet} from "./lib/getBalanceOfWallet"
+
+export {network,
+    getAddress,
+    createHdKeyFromMnemonic,
+    restoreDoichainWalletFromHdKey,
+    listTransactions,
+    listUnspent,
+    getBalanceOfWallet
+}
