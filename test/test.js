@@ -18,6 +18,11 @@ import {changeNetwork, DEFAULT_NETWORK, DOICHAIN_REGTEST,DOICHAIN_TESTNET,DOICHA
 import {fundWallet} from "../lib/fundWallet";
 import {listTransactions} from "../lib/listTransactions"
 import {listUnspent} from "../lib/listUnspent";
+import {encryptAES} from "../lib/encryptAES";
+import {decryptAES} from "../lib/decryptAES";
+
+const SEEDPHRASE = "balance blanket camp festival party robot social stairs noodle piano copy drastic"
+const PASSWORD = "julianAssange2020"
 
 describe('js-doichain', function(){
   this.timeout(0);
@@ -82,6 +87,13 @@ describe('js-doichain', function(){
       console.log(unspent)
       const transactions = await listTransactions(address)
       console.log(transactions)
+    })
+
+    it('Encrypt and decrypt seed phrase', function () {
+      const encryptedSeedPhrase = encryptAES(SEEDPHRASE, PASSWORD)
+      chai.assert.isAbove(encryptedSeedPhrase.length,0,"seed phrase not encrypted")
+      const decryptedSeedPhrase = decryptAES(encryptedSeedPhrase, PASSWORD)
+      chai.assert.equal(decryptedSeedPhrase,SEEDPHRASE,"seed phrase not decrypted")
     })
 
   })
