@@ -5,6 +5,8 @@ import {restoreDoichainWalletFromHdKey} from "./lib/restoreDoichainWalletFromHdK
 import {listTransactions} from "./lib/listTransactions"
 import {listUnspent} from "./lib/listUnspent"
 import {getBalanceOfWallet} from "./lib/getBalanceOfWallet"
+import {encryptAES} from "./lib/encryptAES"
+import {decryptAES} from "./lib/decryptAES"
 
 export {network,
     getAddress,
@@ -12,5 +14,7 @@ export {network,
     restoreDoichainWalletFromHdKey,
     listTransactions,
     listUnspent,
-    getBalanceOfWallet
+    getBalanceOfWallet,
+    decryptAES,
+    encryptAES
 }
