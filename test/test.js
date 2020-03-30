@@ -108,11 +108,14 @@ describe('js-doichain', function(){
       chai.assert.isAtLeast(balance.balance,1,"should be at least 1")
     })
 
-    it('encrypt and decrypt seed phrase', function () {
+    it.only('encrypt and decrypt seed phrase', function () {
       const encryptedSeedPhrase = encryptAES(SEEDPHRASE, PASSWORD)
       chai.assert.isAbove(encryptedSeedPhrase.length,0,"seed phrase not encrypted")
       const decryptedSeedPhrase = decryptAES(encryptedSeedPhrase, PASSWORD)
       chai.assert.equal(decryptedSeedPhrase,SEEDPHRASE,"seed phrase not decrypted")
+      const decryptedSeedPhrase2 = decryptAES(encryptedSeedPhrase, "wrongPassword")
+      chai.assert.notEqual(decryptedSeedPhrase2,SEEDPHRASE,"this is completely impossible")
+      chai.assert.equal(decryptedSeedPhrase2,"","this is not empty")
     })
 
   })
