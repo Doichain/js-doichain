@@ -118,6 +118,19 @@ describe('js-doichain', function(){
       chai.assert.equal(decryptedSeedPhrase2,"","this is not empty")
     })
 
+    it('creates a master key and generates a address from it ', async function () {
+      const mnemonic = "refuse brush romance together undo document tortoise life equal trash sun ask"
+      changeNetwork('regtest')
+      const hdKey = createHdKeyFromMnemonic(mnemonic)
+      const newWallet = await createNewWallet(hdKey,0)
+      chai.expect(newWallet).to.have.own.property('publicExtendedKey');
+      const bitcoin = require('bitcoinjs-lib')
+      let childKey0FromXpub = bitcoin.bip32.fromBase58(newWallet.publicExtendedKey);
+      chai.assert.equal(childKey0FromXpub.privateKey,null,"privateKey should not be defined")
+      chai.assert.notEqual(childKey0FromXpub.publicKey,null,"publicKey should be defined")
+      let address0 = bitcoin.payments.p2pkh({ pubkey: childKey0FromXpub.derivePath("0/0").publicKey, network: global.DEFAULT_NETWORK}).address
+      chai.expect(address0).to.have.length(34)
+    })
   })
 
 });
