@@ -23,6 +23,7 @@ import {getBalanceOfAddresses} from "../lib/getBalanceOfAddresses"
 import {createNewWallet} from "../lib/createNewWallet";
 import {encryptAES} from "../lib/encryptAES";
 import {decryptAES} from "../lib/decryptAES";
+import { generateNewAddress } from '../lib/generateNewAddress';
 
 const MNEMONIC = "refuse brush romance together undo document tortoise life equal trash sun ask"
 const SEEDPHRASE = "balance blanket camp festival party robot social stairs noodle piano copy drastic"
@@ -79,6 +80,7 @@ describe('js-doichain', function(){
       chai.expect(newWallet.addresses[0].address.substring(0,1)).to.not.be.uppercase
       const doi = 10
       const funding = await fundWallet(newWallet.addresses[0].address,doi)
+      chai.assert.notEqual(funding.status,"fail","blockchain problem")
       const address = funding.data.address
       chai.expect(address).to.have.length(34)
       chai.expect(address.substring(0,1)).to.not.be.uppercase
@@ -119,6 +121,16 @@ describe('js-doichain', function(){
       const decryptedSeedPhrase2 = decryptAES(encryptedSeedPhrase, "wrongPassword")
       chai.assert.notEqual(decryptedSeedPhrase2,SEEDPHRASE,"this is completely impossible")
       chai.assert.equal(decryptedSeedPhrase2,"","this is not empty")
+    })
+
+    it('creates a master key and generates a address from it ', async function () {
+      const mnemonic = "refuse brush romance together undo document tortoise life equal trash sun ask"
+      changeNetwork('regtest')
+      const hdKey = createHdKeyFromMnemonic(mnemonic)
+      const newWallet = await createNewWallet(hdKey,0)
+      chai.expect(newWallet).to.have.own.property('publicExtendedKey');
+      const address = generateNewAddress(newWallet.publicExtendedKey, newWallet.addresses[newWallet.addresses.length-1].derivationPath, network)
+      chai.expect(address).to.have.length(34)
     })
   })
 
