@@ -6,6 +6,7 @@ import {listTransactions} from "./lib/listTransactions"
 import {listUnspent} from "./lib/listUnspent"
 import {getBalanceOfWallet} from "./lib/getBalanceOfWallet"
 import {getBalanceOfAddresses} from "./lib/getBalanceOfAddresses"
+import {sendToAddress} from "./lib/sendToAddress"
 import {encryptAES} from "./lib/encryptAES"
 import {decryptAES} from "./lib/decryptAES"
 
@@ -18,5 +19,6 @@ export {network,
     getBalanceOfAddresses,
     getBalanceOfWallet,
     decryptAES,
-    encryptAES
+    encryptAES,
+    sendToAddress
 }

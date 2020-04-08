@@ -23,6 +23,7 @@ import {getBalanceOfAddresses} from "../lib/getBalanceOfAddresses"
 import {createNewWallet} from "../lib/createNewWallet";
 import {encryptAES} from "../lib/encryptAES";
 import {decryptAES} from "../lib/decryptAES";
+import {sendToAddress} from "../lib/sendToAddress";
 
 const MNEMONIC = "refuse brush romance together undo document tortoise life equal trash sun ask"
 const SEEDPHRASE = "balance blanket camp festival party robot social stairs noodle piano copy drastic"
@@ -119,6 +120,10 @@ describe('js-doichain', function(){
       const decryptedSeedPhrase2 = decryptAES(encryptedSeedPhrase, "wrongPassword")
       chai.assert.notEqual(decryptedSeedPhrase2,SEEDPHRASE,"this is completely impossible")
       chai.assert.equal(decryptedSeedPhrase2,"","this is not empty")
+    })
+
+    it.only('should send Doicoins to another wallet', () => {
+
     })
   })
 
