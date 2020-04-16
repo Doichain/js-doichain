@@ -1,6 +1,6 @@
 {
   "name": "doichain",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "description": "A js-Doichain library. The goal is to fully cover the Doichain protocoll",
   "main": "index.js",
   "scripts": {
