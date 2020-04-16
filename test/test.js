@@ -25,7 +25,8 @@ import {createNewWallet} from "../lib/createNewWallet";
 import {encryptAES} from "../lib/encryptAES";
 import {decryptAES} from "../lib/decryptAES";
 import {generateNewAddress} from '../lib/generateNewAddress';
-import {sendToAddress} from "../lib/sendToAddress";
+import {sendToAddress} from "../lib/sendToAddress"
+import {getUnspents} from "../lib/getUnspents"
 
 
 const MNEMONIC = "refuse brush romance together undo document tortoise life equal trash sun ask"
@@ -137,7 +138,7 @@ describe('js-doichain', function () {
             chai.expect(address).to.have.length(34)
         })
 
-        xit('should generate a new Doichain address and iport it', async () => {
+        it('should generate a new Doichain address and iport it', async () => {
             changeNetwork('regtest')
             const mnemonicAlice = generateMnemonic()
             const hdKeyAlice = createHdKeyFromMnemonic(mnemonicAlice)
@@ -160,46 +161,89 @@ describe('js-doichain', function () {
             const doi = 10
             const funding = await fundWallet(firstAddressAlice, doi)
 
+
             const mnemonicBob = generateMnemonic()
             const hdKeyBob = createHdKeyFromMnemonic(mnemonicBob)
             const newWalletBob = await createNewWallet(hdKeyBob, 0)
             const addressesOfBob = newWalletBob.addresses
             const firstAddressBob = addressesOfBob[0].address
             console.log("firstAddressBob", firstAddressBob)
+
             chai.expect(firstAddressBob.substring(0, 1)).to.not.be.uppercase
 
-            await setTimeout(async function () {
-                console.log('waiting over.');
-                const derivationPath = 'm/0/0/0'
-                const walletDataAlice = await getBalanceOfWallet(hdKeyAlice, derivationPath)
-                chai.assert.equal(walletDataAlice.balance, 1, "should be at least 1")
-                console.log('walletDataAlice', walletDataAlice)
-                const walletDataBob = await getBalanceOfWallet(hdKeyBob, derivationPath)
-                chai.assert.equal(walletDataBob.balance, 0, "should be at least 1")
-                console.log('walletDataBob', walletDataBob)
-                const getUnspents = (wallet) => {
-                    const inputs = []
-                    wallet.addresses.forEach((addr) => addr.transactions.forEach(tx => inputs.push(tx)))
-                    return inputs
-                }
-                const selectedInputs = getUnspents(walletDataAlice)
-                console.log('selectedInputs', selectedInputs)
+                      await setTimeout(async function () {
+                           console.log('waiting over.');
+                          const derivationPath = 'm/0/0/0'
+                          const walletDataAlice = await getBalanceOfWallet(hdKeyAlice, derivationPath)
+                          chai.assert.equal(walletDataAlice.balance, 10, "should be at  10")
+                          console.log('walletDataAlice', walletDataAlice)
+                          const walletDataBob = await getBalanceOfWallet(hdKeyBob, derivationPath)
+                          chai.assert.equal(walletDataBob.balance, 0, "should be at least 1")
+                          console.log('walletDataBob', walletDataBob)
+                          let selectedInputs = getUnspents(walletDataAlice)
+                          console.log('selectedInputs', selectedInputs)
 
-                const amount = 10000000
-                const destAddress = firstAddressBob
-                const changeAddress = firstAddressAlice
-                let walletKey = hdKeyAlice.derive(derivationPath)
-                const txResponse = await sendToAddress(walletKey, destAddress, changeAddress, amount, selectedInputs)     //chai.expect(addressesOfBob[0].address.substring(0,1)).to.not.be.uppercase
-                console.log('txResponse', txResponse)
-                await setTimeout(async function () {
-                    //get new balance
-                    const walletDataAlice2 = await getBalanceOfWallet(hdKeyAlice, derivationPath)
-                    console.log("walletDataAlice2", walletDataAlice2)
-                    // console.log('txs of alice now:',walletDataAlice2.addresses[0].transactions)
-                    const walletDataBob2 = await getBalanceOfWallet(hdKeyBob, derivationPath) //const hdKey2 = createHdKeyFromMnemonic(MNEMONIC2)
-                    console.log("walletDataBob2", walletDataBob2)
-                }, 3000)
-            }, 3000)
+                          const amount = 10000000
+                          const destAddress = firstAddressBob
+                          const changeAddress = firstAddressAlice //TODO please implement getNewChangeAddress
+                          let walletKey = hdKeyAlice.derive(derivationPath)
+
+                          let txResponse = await sendToAddress(walletKey, destAddress, changeAddress, amount, selectedInputs)     //chai.expect(addressesOfBob[0].address.substring(0,1)).to.not.be.uppercase
+                          chai.assert.equal(txResponse.status, 'success', "problem with sending transaction to blockchain")
+
+                          console.log('txResponse', txResponse)
+                          await setTimeout(async function () {
+                              //get new balance
+                              const walletDataAlice2 = await getBalanceOfWallet(hdKeyAlice, derivationPath)
+                              chai.assert.equal(walletDataAlice2.balance, 9.8993182, "amount of alice is wrong")
+
+                              //1. take the spend input from response and mark it in our wallet as spent
+                              const ourOldInputs = txResponse.txRaw.vin
+                              walletDataAlice2.addresses.forEach( addr => addr.transactions.forEach( atx => {
+                                  ourOldInputs.forEach(oldInputTx => {
+                                      if(atx.txid===oldInputTx.txid){
+                                          atx.spent = true
+                                          console.log('found tx - setting it as spent',atx)
+                                      }
+                                  })
+                              }))
+                              console.log("new old wallet transactions ",walletDataAlice2.addresses[0].transactions)
+                              //2. take the new outputs and put it back into our wallet (adding change from last transaction as new unspent output
+                              const newOutputs = txResponse.txRaw.vout
+                              console.log(' txResponse.txRaw', txResponse.txRaw)
+                              console.log('newOutputs',newOutputs)
+                              newOutputs.forEach( out => {
+                                  const outValue = out.value
+                                  const outN = out.n
+                                  const outTxid = txResponse.txRaw.txid
+                                  out.scriptPubKey.addresses.forEach( outputAddr => {
+                                      walletDataAlice2.addresses.forEach( walletAddr => {
+                                          if(outputAddr == walletAddr.address){
+                                              console.log('found our address adding transaction to it')
+                                              walletAddr.transactions.push({txid:outTxid, n:outN, category: 'receive', amount:outValue, fee:0, confirmations:0, senderAdress:'not yet defined', address:outputAddr})
+                                          }
+                                      })
+                                  })
+                              })
+                              console.log("new  wallet transactions ",walletDataAlice2.addresses[0].transactions)
+
+                              selectedInputs = getUnspents(walletDataAlice2)
+                              console.log("new inputs ",selectedInputs)
+                              //walletDataAlice2.addresses.forEach( addr => addr.tran)
+
+                              // console.log('txs of alice now:',walletDataAlice2.addresses[0].transactions)
+                              const walletDataBob2 = await getBalanceOfWallet(hdKeyBob, derivationPath) //const hdKey2 = createHdKeyFromMnemonic(MNEMONIC2)
+                              console.log("walletDataBob2", walletDataBob2)
+                              chai.assert.equal(walletDataBob2.balance, 0.1, "should be at least 1")
+
+                              //send 0.2 BTC
+                              const amount2 = 20000000
+                              const txResponse2 = await sendToAddress(walletKey, destAddress, changeAddress, amount2, selectedInputs)     //chai.expect(addressesOfBob[0].address.substring(0,1)).to.not.be.uppercase
+                              console.log('txResponse',txResponse)
+                              chai.assert.equal(txResponse2.status, 'success', "problem with sending transaction to blockchain")
+
+                          }, 3000)
+                      }, 3000)
 
         })
     })
