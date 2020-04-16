@@ -74,7 +74,7 @@ describe('js-doichain', function () {
             //chai.expect(wallet.addresses[0].address.substring(0,1)).to.not.be.uppercase
         })
 
-        it('should create a new Doichain regtest wallet and fund it with 1 DOI ', async () => {
+        it.only('should create a new Doichain regtest wallet and fund it with 1 DOI ', async () => {
             changeNetwork('regtest')
             const hdKey = createHdKeyFromMnemonic(MNEMONIC)
             const wallets = await restoreDoichainWalletFromHdKey(hdKey, 'alice@ci-doichain.org', DOICHAIN_REGTEST)
@@ -138,7 +138,7 @@ describe('js-doichain', function () {
             chai.expect(address).to.have.length(34)
         })
 
-        it('should generate a new Doichain address and iport it', async () => {
+        it('should generate a new Doichain address and import it', async () => {
             changeNetwork('regtest')
             const mnemonicAlice = generateMnemonic()
             const hdKeyAlice = createHdKeyFromMnemonic(mnemonicAlice)
@@ -148,7 +148,7 @@ describe('js-doichain', function () {
             chai.expect(address.substring(0, 1)).to.not.be.uppercase
         })
 
-        it.only('should send Doicoins to another address', async () => {
+        it('should send Doicoins to another address', async () => {
             changeNetwork('regtest')
             const mnemonicAlice = generateMnemonic()
             const hdKeyAlice = createHdKeyFromMnemonic(mnemonicAlice)
@@ -197,35 +197,7 @@ describe('js-doichain', function () {
                               const walletDataAlice2 = await getBalanceOfWallet(hdKeyAlice, derivationPath)
                               chai.assert.equal(walletDataAlice2.balance, 9.8993182, "amount of alice is wrong")
 
-                              //1. take the spend input from response and mark it in our wallet as spent
-                              const ourOldInputs = txResponse.txRaw.vin
-                              walletDataAlice2.addresses.forEach( addr => addr.transactions.forEach( atx => {
-                                  ourOldInputs.forEach(oldInputTx => {
-                                      if(atx.txid===oldInputTx.txid){
-                                          atx.spent = true
-                                          console.log('found tx - setting it as spent',atx)
-                                      }
-                                  })
-                              }))
-                              console.log("new old wallet transactions ",walletDataAlice2.addresses[0].transactions)
-                              //2. take the new outputs and put it back into our wallet (adding change from last transaction as new unspent output
-                              const newOutputs = txResponse.txRaw.vout
-                              console.log(' txResponse.txRaw', txResponse.txRaw)
-                              console.log('newOutputs',newOutputs)
-                              newOutputs.forEach( out => {
-                                  const outValue = out.value
-                                  const outN = out.n
-                                  const outTxid = txResponse.txRaw.txid
-                                  out.scriptPubKey.addresses.forEach( outputAddr => {
-                                      walletDataAlice2.addresses.forEach( walletAddr => {
-                                          if(outputAddr == walletAddr.address){
-                                              console.log('found our address adding transaction to it')
-                                              walletAddr.transactions.push({txid:outTxid, n:outN, category: 'receive', amount:outValue, fee:0, confirmations:0, senderAdress:'not yet defined', address:outputAddr})
-                                          }
-                                      })
-                                  })
-                              })
-                              console.log("new  wallet transactions ",walletDataAlice2.addresses[0].transactions)
+                              updateWalletWithUnconfirmedUtxos(txResponse,walletDataAlice2)
 
                               selectedInputs = getUnspents(walletDataAlice2)
                               console.log("new inputs ",selectedInputs)

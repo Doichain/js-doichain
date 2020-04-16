@@ -7,8 +7,10 @@ import {listUnspent} from "./lib/listUnspent"
 import {getBalanceOfWallet} from "./lib/getBalanceOfWallet"
 import {getBalanceOfAddresses} from "./lib/getBalanceOfAddresses"
 import {sendToAddress} from "./lib/sendToAddress"
+import {getUnspents} from "./lib/getUnspents"
 import {encryptAES} from "./lib/encryptAES"
 import {decryptAES} from "./lib/decryptAES"
+import {updateWalletWithUnconfirmedUtxos} from "./lib/updateWalletWithUnconfirmedUtxos"
 
 export {network,
     getAddress,
@@ -20,5 +22,7 @@ export {network,
     getBalanceOfWallet,
     decryptAES,
     encryptAES,
-    sendToAddress
+    getUnspents,
+    sendToAddress,
+    updateWalletWithUnconfirmedUtxos
 }
