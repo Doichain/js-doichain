@@ -39,56 +39,59 @@ describe('js-doichain', function () {
     this.timeout(0);
     describe('basic doichain functions', function () {
 
-        xit('should create a new mnemonic seed phrase', function () {
+        it('should create a new mnemonic seed phrase', function () {
             const mnemonic = generateMnemonic()
             chai.assert.equal(mnemonic.split(' ').length, 12, 'mnemonic doesnt contain 12 words')
         })
 
-        xit('should validate a mnemonic seed phrase', function () {
+        it('should validate a mnemonic seed phrase', function () {
             const valid = validateMnemonic(MNEMONIC)
             chai.assert.equal(valid, true, "mnomnic seed phrase not valid")
         })
 
-        xit('should create a hdkey from a mnemonic without password', function () {
+        it('should create a hdkey from a mnemonic without password', function () {
             const hdKey = createHdKeyFromMnemonic(MNEMONIC)
             chai.expect(hdKey).to.have.own.property('_privateKey');
             chai.expect(hdKey).to.have.own.property('_publicKey');
         })
 
         //TODO this doesn't create a wallet
-        xit('should create a new Doichain wallet from a seed in mainnet', function () {
+        it.only('should restore new Doichain wallet from a seed in mainnet', async function () {
             changeNetwork('mainnet')
             const hdKey = createHdKeyFromMnemonic(MNEMONIC)
             // chai.expect(() => createDoichainWalletFromHdKey(hdKey)).to.throw();
             // chai.expect(() => createDoichainWalletFromHdKey(hdKey,'alice@ci-doichain.org')).to.not.throw();
-            const wallets = restoreDoichainWalletFromHdKey(hdKey, 'alice@ci-doichain.org')
-            // bitcoin testnet P2PKH addresses start with a 'm' or 'n'
-            //
-            chai.assert.strictEqual(wallets[0].addresses[0].address.startsWith('M') || wallet.addresses[0].address.startsWith('N'),true)
-            chai.expect(wallets[0].addresses[0].address).to.have.length(34)
-            chai.expect(wallets[0].addresses[0].address.substring(0,1)).to.be.uppercase
+            //const xpubMaster = bitcoin.bip32.fromBase58(hdKey.publicExtendedKey)
+            const wallets = await restoreDoichainWalletFromHdKey(hdKey, 'alice@ci-doichain.org')
+            const newWallet = await createNewWallet(hdKey, wallets.length)
+            chai.assert.strictEqual(newWallet.addresses[0].address.startsWith('M') || newWallet.addresses[0].address.startsWith('N'),true)
+            chai.expect(newWallet.addresses[0].address).to.have.length(34)
+            chai.expect(newWallet.addresses[0].address.substring(0,1)).to.be.uppercase
         })
 
         //TODO this doesn't create a wallet
-        xit('should create a new Doichain wallet from a seed in testnet', function () {
+        it.only('should create a new Doichain wallet from a seed in testnet', async function () {
             changeNetwork('testnet')
             const hdKey = createHdKeyFromMnemonic(MNEMONIC)
-            const wallets = restoreDoichainWalletFromHdKey(hdKey, 'alice@ci-doichain.org', DOICHAIN_TESTNET)
-            //chai.assert.strictEqual(wallet.addresses[0].address.startsWith('m') || wallet.addresses[0].address.startsWith('n'),true)
+            const wallets = await restoreDoichainWalletFromHdKey(hdKey, 'alice@ci-doichain.org', DOICHAIN_TESTNET)
+            console.log('wallets',wallets)
+            const newWallet = await createNewWallet(hdKey, wallets.length)
+         //   chai.assert.strictEqual(newWallet.addresses[0].address.startsWith('m') || newWallet.addresses[0].address.startsWith('n'),true)
             //chai.expect(wallet.addresses[0].address).to.have.length(34)
             //chai.expect(wallet.addresses[0].address.substring(0,1)).to.not.be.uppercase
         })
 
-        xit('should fund with 10 DOI ', async () => {
+        it('should fund with 10 DOI ', async () => {
             changeNetwork('regtest')
             const hdKey = createHdKeyFromMnemonic(MNEMONIC)
-            const wallets = await restoreDoichainWalletFromHdKey(hdKey, 'alice@ci-doichain.org', DOICHAIN_REGTEST)
+            const xpubMaster = bitcoin.bip32.fromBase58(hdKey.publicExtendedKey)
+            const wallets = await restoreDoichainWalletFromHdKey(xpubMaster, 'alice@ci-doichain.org', DOICHAIN_REGTEST)
             const newWallet = await createNewWallet(hdKey, wallets.length)
             chai.assert.strictEqual(newWallet.addresses[0].address.startsWith('m') || newWallet.addresses[0].address.startsWith('n'), true)
             chai.expect(newWallet.addresses[0].address).to.have.length(34)
             chai.expect(newWallet.addresses[0].address.substring(0, 1)).to.not.be.uppercase
 
-            const xpubMaster = bitcoin.bip32.fromBase58(hdKey.publicExtendedKey)
+
             const balanceObj = await getBalanceOfWallet(xpubMaster, 'm/0/0/0')
               if(balanceObj.balance<5){
                      const doi = 10
@@ -104,7 +107,7 @@ describe('js-doichain', function () {
                  }
         })
 
-        xit('should check the full balance of a wallets addresses', async () => {
+        it('should check the full balance of a wallets addresses', async () => {
             changeNetwork('regtest')
             const hdKey = createHdKeyFromMnemonic(MNEMONIC)
             const wallets = await restoreDoichainWalletFromHdKey(hdKey, 'alice@ci-doichain.org')
@@ -123,7 +126,7 @@ describe('js-doichain', function () {
             chai.assert.isAtLeast(balanceRet3.balance, 2, "should be at least 1")
         })
 
-        xit('encrypt and decrypt seed phrase', function () {
+        it('encrypt and decrypt seed phrase', function () {
             const encryptedSeedPhrase = encryptAES(MNEMONIC2, PASSWORD)
             chai.assert.isAbove(encryptedSeedPhrase.length, 0, "seed phrase not encrypted")
             const decryptedSeedPhrase = decryptAES(encryptedSeedPhrase, PASSWORD)
@@ -133,7 +136,7 @@ describe('js-doichain', function () {
             chai.assert.equal(decryptedSeedPhrase2, "", "this is not empty")
         })
 
-        xit('creates a master key and generates a address from it ', async function () {
+        it('creates a master key and generates a address from it ', async function () {
             changeNetwork('regtest')
             const hdKey = createHdKeyFromMnemonic(MNEMONIC)
 
@@ -145,7 +148,7 @@ describe('js-doichain', function () {
             chai.expect(address).to.have.length(34)
         })
 
-        xit('should generate a new Doichain address and import it', async () => {
+        it('should generate a new Doichain address and import it', async () => {
             changeNetwork('regtest')
             const mnemonicAlice = generateMnemonic()
             const hdKeyAlice = createHdKeyFromMnemonic(mnemonicAlice)
@@ -225,8 +228,8 @@ describe('js-doichain', function () {
                         console.log('txResponse',txResponse)
                         chai.assert.equal(txResponse2.status, 'success', "problem with sending transaction to blockchain")
 
-                        //now check balance of alice & bob again
-                        //check usnpents one more time
+                        //TODO now check balance of alice & bob again
+                        //TODO check usnpents one more time
 
                     }, 3000)
             }, 3000)
