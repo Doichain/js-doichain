@@ -56,7 +56,7 @@ describe('js-doichain', function () {
         })
 
         //TODO this doesn't create a wallet
-        it.only('should restore new Doichain wallet from a seed in mainnet', async function () {
+        it('should restore new Doichain wallet from a seed in mainnet', async function () {
             changeNetwork('mainnet')
             const hdKey = createHdKeyFromMnemonic(MNEMONIC)
             // chai.expect(() => createDoichainWalletFromHdKey(hdKey)).to.throw();
@@ -70,32 +70,36 @@ describe('js-doichain', function () {
         })
 
         //TODO this doesn't create a wallet
-        it.only('should create a new Doichain wallet from a seed in testnet', async function () {
+        it('should create a new Doichain wallet from a seed in testnet', async function () {
             changeNetwork('testnet')
             const hdKey = createHdKeyFromMnemonic(MNEMONIC)
             const wallets = await restoreDoichainWalletFromHdKey(hdKey, 'alice@ci-doichain.org', DOICHAIN_TESTNET)
-            console.log('wallets',wallets)
             const newWallet = await createNewWallet(hdKey, wallets.length)
-         //   chai.assert.strictEqual(newWallet.addresses[0].address.startsWith('m') || newWallet.addresses[0].address.startsWith('n'),true)
-            //chai.expect(wallet.addresses[0].address).to.have.length(34)
-            //chai.expect(wallet.addresses[0].address.substring(0,1)).to.not.be.uppercase
+            chai.assert.strictEqual(newWallet.addresses[0].address.startsWith('m') || newWallet.addresses[0].address.startsWith('n'),true)
+            chai.expect(wallet.addresses[0].address).to.have.length(34)
+            chai.expect(wallet.addresses[0].address.substring(0,1)).to.not.be.uppercase
         })
 
-        it('should fund with 10 DOI ', async () => {
+        it.only('should fund the basic regtest wallet with 10 DOI ', async () => {
             changeNetwork('regtest')
             const hdKey = createHdKeyFromMnemonic(MNEMONIC)
             const xpubMaster = bitcoin.bip32.fromBase58(hdKey.publicExtendedKey)
-            const wallets = await restoreDoichainWalletFromHdKey(xpubMaster, 'alice@ci-doichain.org', DOICHAIN_REGTEST)
+
+            const wallets = await restoreDoichainWalletFromHdKey(hdKey, 'alice@ci-doichain.org', DOICHAIN_REGTEST)
             const newWallet = await createNewWallet(hdKey, wallets.length)
+
             chai.assert.strictEqual(newWallet.addresses[0].address.startsWith('m') || newWallet.addresses[0].address.startsWith('n'), true)
             chai.expect(newWallet.addresses[0].address).to.have.length(34)
             chai.expect(newWallet.addresses[0].address.substring(0, 1)).to.not.be.uppercase
 
-
             const balanceObj = await getBalanceOfWallet(xpubMaster, 'm/0/0/0')
-              if(balanceObj.balance<5){
+
+            console.log('balanceObj.balance',balanceObj)
+            if(balanceObj.balance<5){
                      const doi = 10
+                     console.log("first address",balanceObj.addresses[0].address)
                      const funding = await fundWallet(balanceObj.addresses[0].address, doi)
+                     console.log('funding',funding)
                      chai.assert.notEqual(funding.status, "fail", "blockchain problem")
                      const address = funding.data.address
                      chai.expect(address).to.have.length(34)
@@ -104,7 +108,7 @@ describe('js-doichain', function () {
                          const balanceObj2 = await getBalanceOfWallet(xpubMaster, 'm/0/0/0')
                          chai.assert.isAtLeast(balanceObj2.balance, 10, "should be at least 1")
                      }, 3000)
-                 }
+            }
         })
 
         it('should check the full balance of a wallets addresses', async () => {
