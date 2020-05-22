@@ -11,6 +11,7 @@ import {getUnspents} from "./lib/getUnspents"
 import {encryptAES} from "./lib/encryptAES"
 import {decryptAES} from "./lib/decryptAES"
 import {updateWalletWithUnconfirmedUtxos} from "./lib/updateWalletWithUnconfirmedUtxos"
+import createAndSendTransaction from "./lib/createAndSendTransaction";
 
 export {network,
     getAddress,
@@ -24,5 +25,6 @@ export {network,
     encryptAES,
     getUnspents,
     sendToAddress,
-    updateWalletWithUnconfirmedUtxos
+    updateWalletWithUnconfirmedUtxos,
+    createAndSendTransaction
 }
