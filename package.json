@@ -38,6 +38,8 @@
     "bitcoinjs-lib": "^5.1.7",
     "crypto-js": "^4.0.0",
     "hdkey": "^1.1.1",
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.0",
+    "satoshi-bitcoin": "^1.0.4",
+    "secp256k1": "^3.7.1"
   }
 }
