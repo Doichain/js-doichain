@@ -1,6 +1,6 @@
 import * as constants from "./lib/constants"
 import * as network from './lib/network'
-import * as getAddress from './lib/getAddress'
+import {getAddress} from './lib/getAddress'
 import {createHdKeyFromMnemonic} from "./lib/createHdKeyFromMnemonic"
 import {restoreDoichainWalletFromHdKey} from "./lib/restoreDoichainWalletFromHdKey"
 import {listTransactions} from "./lib/listTransactions"
@@ -14,6 +14,9 @@ import {decryptAES} from "./lib/decryptAES"
 import {updateWalletWithUnconfirmedUtxos} from "./lib/updateWalletWithUnconfirmedUtxos"
 import createAndSendTransaction from "./lib/createAndSendTransaction"
 import getValidatorPublicKeyOfEmail from "./lib/getValidatorPublicKeyOfEmail"
+import encryptMessage from "./lib/encryptMessage"
+import getDataHash from "./lib/getDataHash"
+import getSignature from "./lib/getSignature"
 
 export {
     constants,
@@ -31,5 +34,8 @@ export {
     sendToAddress,
     updateWalletWithUnconfirmedUtxos,
     createAndSendTransaction,
-    getValidatorPublicKeyOfEmail
+    getValidatorPublicKeyOfEmail,
+    encryptMessage,
+    getDataHash,
+    getSignature
 }
