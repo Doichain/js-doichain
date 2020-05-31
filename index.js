@@ -17,6 +17,8 @@ import getValidatorPublicKeyOfEmail from "./lib/getValidatorPublicKeyOfEmail"
 import encryptMessage from "./lib/encryptMessage"
 import getDataHash from "./lib/getDataHash"
 import getSignature from "./lib/getSignature"
+import generateNewKeyPairFromHdKey from "./lib/generateNewKeyPairFromHdKey"
+import encryptTemplate from "./lib/encryptTemplate"
 
 export {
     constants,
@@ -37,5 +39,7 @@ export {
     getValidatorPublicKeyOfEmail,
     encryptMessage,
     getDataHash,
-    getSignature
+    getSignature,
+    generateNewKeyPairFromHdKey,
+    encryptTemplate
 }
