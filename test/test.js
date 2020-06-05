@@ -1,6 +1,6 @@
 import chai from 'chai'
 const bitcoin = require('bitcoinjs-lib')
-
+import { PrivateKey } from 'eciesjs'
 chai.Assertion.addProperty('uppercase', function () {
     var obj = this._obj;
     new chai.Assertion(obj).to.be.a('string');
@@ -29,6 +29,8 @@ import {generateNewAddress} from '../lib/generateNewAddress';
 import {sendToAddress} from "../lib/sendToAddress"
 import {getUnspents} from "../lib/getUnspents"
 import {updateWalletWithUnconfirmedUtxos} from "../lib/updateWalletWithUnconfirmedUtxos"
+import decryptStandardECIES from "../lib/decryptStandardECIES"
+import encryptStandardECIES from "../lib/encryptStandardECIES"
 
 
 const MNEMONIC = "refuse brush romance together undo document tortoise life equal trash sun ask"
@@ -239,5 +241,37 @@ describe('js-doichain', function () {
             }, 3000)
 
         })
+    })
+
+    it.only('encrypt and decrypt with ecies', async () => {
+
+        const k1 = new PrivateKey()
+        const message = "That is a simple message"
+        const publicKeyOfBob = k1.publicKey.toHex()
+        const privateKeyOfBob = k1.toHex()
+        const encryptedMessage = encryptStandardECIES(publicKeyOfBob,message)
+        const decryptedMessage = decryptStandardECIES(privateKeyOfBob,encryptedMessage)
+      //  console.log('decryptedMessage',decryptedMessage)
+        chai.assert.equal(decryptedMessage, message, "encryption and decryption didn't work")
+
+        function rng () {
+            return Buffer.from('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
+        } // get a much more secure random
+
+        const keyPair = bitcoin.ECPair.makeRandom({ rng: rng })
+        const { address } = bitcoin.payments.p2pkh({ pubkey: keyPair.publicKey })
+        //console.log("address " + address) // 17wqX8P6kz6DrDRQfdJ9KeqUTRmgh1NzSk
+        var publicKey = keyPair.publicKey.toString('hex')
+        //console.log("public key " + publicKey) // 0279bf075bae171835513be1056f224f94f3915f9999a3faea1194d97b54397219
+
+        var wif = keyPair.toWIF()
+        //console.log("private key WIF " + wif) // 200424e3612358db9078760d4f652a105049187c29f2d03d7d65bc9e27a007d0
+
+        const message2 = "That is a simple message"
+        const publicKeyOfBob2 = publicKey
+        const privateKeyOfBob2 = keyPair.privateKey.toString('hex')
+        const encryptedMessage2 = encryptStandardECIES(publicKeyOfBob2,message2)
+        const decryptedMessage2 = decryptStandardECIES(privateKeyOfBob2,encryptedMessage2)
+        console.log(decryptedMessage2)
     })
 });

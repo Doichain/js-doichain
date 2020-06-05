@@ -19,6 +19,10 @@ import getDataHash from "./lib/getDataHash"
 import getSignature from "./lib/getSignature"
 import generateNewKeyPairFromHdKey from "./lib/generateNewKeyPairFromHdKey"
 import encryptTemplate from "./lib/encryptTemplate"
+import {getServerStatus} from "./lib/getServerStatus";
+import encryptStandardECIES from "./lib/encryptStandardECIES"
+import decryptStandardECIES from "./lib/decryptStandardECIES"
+import createDoichainEntry from "./lib/createDoichainEntry"
 
 export {
     constants,
@@ -41,5 +45,9 @@ export {
     getDataHash,
     getSignature,
     generateNewKeyPairFromHdKey,
-    encryptTemplate
+    encryptTemplate,
+    getServerStatus,
+    encryptStandardECIES,
+    decryptStandardECIES,
+    createDoichainEntry
 }
