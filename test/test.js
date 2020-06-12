@@ -31,6 +31,7 @@ import {getUnspents} from "../lib/getUnspents"
 import {updateWalletWithUnconfirmedUtxos} from "../lib/updateWalletWithUnconfirmedUtxos"
 import decryptStandardECIES from "../lib/decryptStandardECIES"
 import encryptStandardECIES from "../lib/encryptStandardECIES"
+import getPrivateKeyFromWif from "../lib/getPrivateKeyFromWif"
 
 
 const MNEMONIC = "refuse brush romance together undo document tortoise life equal trash sun ask"
@@ -254,22 +255,30 @@ describe('js-doichain', function () {
       //  console.log('decryptedMessage',decryptedMessage)
         chai.assert.equal(decryptedMessage, message, "encryption and decryption didn't work")
 
-        function rng () {
+        changeNetwork('regtest')
+        const wif = "cP3EigkzsWuyKEmxk8cC6qXYb4ZjwUo5vzvZpAPmDQ83RCgXQruj"
+
+        var keyPair = bitcoin.ECPair.fromWIF(wif,DOICHAIN_REGTEST)
+        var publicKey = keyPair.publicKey.toString('hex')
+        const privateKeyOfBob2 = getPrivateKeyFromWif(wif,DOICHAIN_REGTEST)
+
+      /*  function rng () {
             return Buffer.from('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
         } // get a much more secure random
 
         const keyPair = bitcoin.ECPair.makeRandom({ rng: rng })
         const { address } = bitcoin.payments.p2pkh({ pubkey: keyPair.publicKey })
-        //console.log("address " + address) // 17wqX8P6kz6DrDRQfdJ9KeqUTRmgh1NzSk
-        var publicKey = keyPair.publicKey.toString('hex')
+        //console.log("address " + address) // 17wqX8P6kz6DrDRQfdJ9KeqUTRmgh1NzSk*/
+      //  var publicKey = keyPair.publicKey.toString('hex')
         //console.log("public key " + publicKey) // 0279bf075bae171835513be1056f224f94f3915f9999a3faea1194d97b54397219
 
-        var wif = keyPair.toWIF()
+
+
         //console.log("private key WIF " + wif) // 200424e3612358db9078760d4f652a105049187c29f2d03d7d65bc9e27a007d0
 
         const message2 = "That is a simple message"
         const publicKeyOfBob2 = publicKey
-        const privateKeyOfBob2 = keyPair.privateKey.toString('hex')
+
         const encryptedMessage2 = encryptStandardECIES(publicKeyOfBob2,message2)
         const decryptedMessage2 = decryptStandardECIES(privateKeyOfBob2,encryptedMessage2)
         console.log(decryptedMessage2)

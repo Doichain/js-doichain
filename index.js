@@ -23,6 +23,7 @@ import {getServerStatus} from "./lib/getServerStatus";
 import encryptStandardECIES from "./lib/encryptStandardECIES"
 import decryptStandardECIES from "./lib/decryptStandardECIES"
 import createDoichainEntry from "./lib/createDoichainEntry"
+import getPrivateKeyFromWif from "./lib/getPrivateKeyFromWif"
 
 export {
     constants,
@@ -49,5 +50,6 @@ export {
     getServerStatus,
     encryptStandardECIES,
     decryptStandardECIES,
-    createDoichainEntry
+    createDoichainEntry,
+    getPrivateKeyFromWif
 }
