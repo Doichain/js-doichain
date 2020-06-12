@@ -32,6 +32,8 @@ import {updateWalletWithUnconfirmedUtxos} from "../lib/updateWalletWithUnconfirm
 import decryptStandardECIES from "../lib/decryptStandardECIES"
 import encryptStandardECIES from "../lib/encryptStandardECIES"
 import getPrivateKeyFromWif from "../lib/getPrivateKeyFromWif"
+import getSignature from "../lib/getSignature"
+import verifySignature from "../lib/verifySignature"
 
 
 const MNEMONIC = "refuse brush romance together undo document tortoise life equal trash sun ask"
@@ -257,10 +259,10 @@ describe('js-doichain', function () {
 
         changeNetwork('regtest')
         const wif = "cP3EigkzsWuyKEmxk8cC6qXYb4ZjwUo5vzvZpAPmDQ83RCgXQruj"
+        const privateKeyOfBob2 = getPrivateKeyFromWif(wif,DOICHAIN_REGTEST)
 
         var keyPair = bitcoin.ECPair.fromWIF(wif,DOICHAIN_REGTEST)
         var publicKey = keyPair.publicKey.toString('hex')
-        const privateKeyOfBob2 = getPrivateKeyFromWif(wif,DOICHAIN_REGTEST)
 
       /*  function rng () {
             return Buffer.from('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
@@ -282,5 +284,23 @@ describe('js-doichain', function () {
         const encryptedMessage2 = encryptStandardECIES(publicKeyOfBob2,message2)
         const decryptedMessage2 = decryptStandardECIES(privateKeyOfBob2,encryptedMessage2)
         console.log(decryptedMessage2)
+        chai.assert.equal(decryptedMessage2, message2, "encryption and decryption didn't work")
+    })
+
+    it.only('create and verify a signature ', async () => {
+        function rng () {
+            return Buffer.from('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
+        } // get a much more secure random
+
+        const keyPair = bitcoin.ECPair.makeRandom({ rng: rng })
+        keyPair.pu
+        const message = "a basic test message"
+        const signature = getSignature(message,keyPair)
+        console.log('signature',signature)
+        const { address } = bitcoin.payments.p2pkh({ pubkey: keyPair.publicKey })
+        console.log('address',address)
+        const validSignature = verifySignature(message,address,signature)
+        chai.assert.equal(true, validSignature, "signature not valid")
+
     })
 });

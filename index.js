@@ -17,6 +17,7 @@ import getValidatorPublicKeyOfEmail from "./lib/getValidatorPublicKeyOfEmail"
 import encryptMessage from "./lib/encryptMessage"
 import getDataHash from "./lib/getDataHash"
 import getSignature from "./lib/getSignature"
+import verifySignature from ".li/verifySignature"
 import generateNewKeyPairFromHdKey from "./lib/generateNewKeyPairFromHdKey"
 import encryptTemplate from "./lib/encryptTemplate"
 import {getServerStatus} from "./lib/getServerStatus";
@@ -45,6 +46,7 @@ export {
     encryptMessage,
     getDataHash,
     getSignature,
+    verifySignature,
     generateNewKeyPairFromHdKey,
     encryptTemplate,
     getServerStatus,
