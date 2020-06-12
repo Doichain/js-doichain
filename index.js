@@ -25,6 +25,7 @@ import encryptStandardECIES from "./lib/encryptStandardECIES"
 import decryptStandardECIES from "./lib/decryptStandardECIES"
 import createDoichainEntry from "./lib/createDoichainEntry"
 import getPrivateKeyFromWif from "./lib/getPrivateKeyFromWif"
+import generateNameId from "./lib/generateNameId"
 
 export {
     constants,
@@ -53,5 +54,6 @@ export {
     encryptStandardECIES,
     decryptStandardECIES,
     createDoichainEntry,
-    getPrivateKeyFromWif
+    getPrivateKeyFromWif,
+    generateNameId
 }
