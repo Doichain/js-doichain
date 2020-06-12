@@ -272,7 +272,7 @@ describe('js-doichain', function () {
         const { address } = bitcoin.payments.p2pkh({ pubkey: keyPair.publicKey })
         //console.log("address " + address) // 17wqX8P6kz6DrDRQfdJ9KeqUTRmgh1NzSk*/
       //  var publicKey = keyPair.publicKey.toString('hex')
-        //console.log("public key " + publicKey) // 0279bf075bae171835513be1056f224f94f3915f9999a3faea1194d97b54397219
+        console.log("public key " + publicKey) // 0279bf075bae171835513be1056f224f94f3915f9999a3faea1194d97b54397219
 
 
 
