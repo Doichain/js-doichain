@@ -278,16 +278,27 @@ describe('js-doichain', function () {
 
         //console.log("private key WIF " + wif) // 200424e3612358db9078760d4f652a105049187c29f2d03d7d65bc9e27a007d0
 
-        const message2 = "That is a simple message"
+        const message2 = "http://localhost:3000"
         const publicKeyOfBob2 = publicKey
 
         const encryptedMessage2 = encryptStandardECIES(publicKeyOfBob2,message2)
+        console.log('encryptedMessage2',encryptedMessage2.toString('hex'))
         const decryptedMessage2 = decryptStandardECIES(privateKeyOfBob2,encryptedMessage2)
         console.log(decryptedMessage2)
         chai.assert.equal(decryptedMessage2, message2, "encryption and decryption didn't work")
+
+
+        const encryptedMessage3 = "04f24211b7e993a8d6c822b1e3100dbdf01cad8b84ef4b7cce0fddf32418061ae8352d064c5b7b746721e6927eabef3cebcabaf2ff0cbf468fb9659367d98a9ba7171cc577bc9afdaf9ec05b88f9a7716b679e8470d68332aac276790fa38b030fb14d8914fb20b5d752c34ea69d5d3f802ba8f6c470eb"//, "hex")
+        const privateKeyWif = "cP3EigkzsWuyKEmxk8cC6qXYb4ZjwUo5vzvZpAPmDQ83RCgXQruj"
+        const keyPair3 = bitcoin.ECPair.fromWIF(privateKeyWif,DOICHAIN_REGTEST) //getPrivateKeyFromWif(privateKeyWif,DOICHAIN_REGTEST)
+        const privateKey = "2b7d05ba4d4903ab99f5740bd0bd51a088ac077c460d67dcdafcbafed71b0195"
+        chai.assert.equal(privateKey,keyPair3.privateKey.toString('hex'),"privatekeys are not the same")
+        const decryptedMessage3 = decryptStandardECIES(keyPair3.privateKey.toString('hex'),encryptedMessage3)
+        console.log("decryptedMessage3",decryptedMessage3)
+        chai.assert.equal(decryptedMessage3, "http://localhost:3000/", "decrypting not successful")
     })
 
-    it.only('create and verify a signature ', async () => {
+    it('create and verify a signature ', async () => {
         function rng () {
             return Buffer.from('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
         } // get a much more secure random
@@ -301,6 +312,5 @@ describe('js-doichain', function () {
         console.log('address',address)
         const validSignature = verifySignature(message,address,signature)
         chai.assert.equal(true, validSignature, "signature not valid")
-
     })
 });
