@@ -18,7 +18,7 @@ import encryptMessage from "./lib/encryptMessage"
 import getDataHash from "./lib/getDataHash"
 import getSignature from "./lib/getSignature"
 import verifySignature from "./lib/verifySignature"
-import generateNewKeyPairFromHdKey from "./lib/generateNewKeyPairFromHdKey"
+import { generateKeyPairFromHdKey } from "./lib/generateKeyPairFromHdKey"
 import encryptTemplate from "./lib/encryptTemplate"
 import {getServerStatus} from "./lib/getServerStatus";
 import encryptStandardECIES from "./lib/encryptStandardECIES"
@@ -26,6 +26,7 @@ import decryptStandardECIES from "./lib/decryptStandardECIES"
 import createDoichainEntry from "./lib/createDoichainEntry"
 import getPrivateKeyFromWif from "./lib/getPrivateKeyFromWif"
 import generateNameId from "./lib/generateNameId"
+import verify from "./lib/verify"
 
 export {
     constants,
@@ -48,12 +49,13 @@ export {
     getDataHash,
     getSignature,
     verifySignature,
-    generateNewKeyPairFromHdKey,
+    generateKeyPairFromHdKey,
     encryptTemplate,
     getServerStatus,
     encryptStandardECIES,
     decryptStandardECIES,
     createDoichainEntry,
     getPrivateKeyFromWif,
-    generateNameId
+    generateNameId,
+    verify
 }
