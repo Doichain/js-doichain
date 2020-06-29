@@ -34,7 +34,7 @@ import encryptStandardECIES from "../lib/encryptStandardECIES"
 import getPrivateKeyFromWif from "../lib/getPrivateKeyFromWif"
 import getSignature from "../lib/getSignature"
 import verifySignature from "../lib/verifySignature"
-
+import createAndSendTransaction from "../lib/createAndSendTransaction"
 
 const MNEMONIC = "refuse brush romance together undo document tortoise life equal trash sun ask"
 const MNEMONIC2 = "balance blanket camp festival party robot social stairs noodle piano copy drastic"
@@ -90,7 +90,8 @@ describe('js-doichain', function () {
             const hdKey = createHdKeyFromMnemonic(MNEMONIC)
             const xpubMaster = bitcoin.bip32.fromBase58(hdKey.publicExtendedKey)
 
-            const wallets = await restoreDoichainWalletFromHdKey(hdKey, 'alice@ci-doichain.org', DOICHAIN_REGTEST)
+            console.log(global.DEFAULT_NETWORK)
+            const wallets = await restoreDoichainWalletFromHdKey(hdKey, 'alice@ci-doichain.org')
             const newWallet = await createNewWallet(hdKey, wallets.length)
 
             chai.assert.strictEqual(newWallet.addresses[0].address.startsWith('m') || newWallet.addresses[0].address.startsWith('n'), true)
@@ -246,7 +247,7 @@ describe('js-doichain', function () {
         })
     })
 
-    it.only('encrypt and decrypt with ecies', async () => {
+    it('encrypt and decrypt with ecies', async () => {
 
         const k1 = new PrivateKey()
         const message = "That is a simple message"
@@ -254,7 +255,6 @@ describe('js-doichain', function () {
         const privateKeyOfBob = k1.toHex()
         const encryptedMessage = encryptStandardECIES(publicKeyOfBob,message)
         const decryptedMessage = decryptStandardECIES(privateKeyOfBob,encryptedMessage)
-      //  console.log('decryptedMessage',decryptedMessage)
         chai.assert.equal(decryptedMessage, message, "encryption and decryption didn't work")
 
         changeNetwork('regtest')
@@ -312,5 +312,41 @@ describe('js-doichain', function () {
         console.log('address',address)
         const validSignature = verifySignature(message,address,signature)
         chai.assert.equal(true, validSignature, "signature not valid")
+    })
+
+    xit('rescue money from a wallet', async () => {
+        changeNetwork('mainnet')
+        const MNEMONIC_OTTMAR = ""
+        const MNEMONIC_OTTMAR_PASSWORD = ""
+
+        const decryptedSeed = decryptAES('U2FsdGVkX1/W8TS0TORpjt5zmE4ex+0ALo79FbL7LQQVgzLw/ykISTyTBEX0xrKrT0oBv2ky7kY/BlLYVkG7346tGDTmrmTHmP8HuhytHncbe5mvjrqIE5RTW0hlPQtz',MNEMONIC_OTTMAR_PASSWORD)
+        const hdKey = createHdKeyFromMnemonic(decryptedSeed,MNEMONIC_OTTMAR_PASSWORD)
+        let childKey0FromXpub = bitcoin.bip32.fromBase58(hdKey.publicExtendedKey,global.DEFAULT_NETWORK);
+        console.log(bitcoin.payments.p2pkh({ pubkey: childKey0FromXpub.derivePath('m/0/0/0').publicKey, network: global.DEFAULT_NETWORK}).address)
+        console.log(bitcoin.payments.p2pkh({ pubkey: childKey0FromXpub.derivePath('m/0/0/1').publicKey, network: global.DEFAULT_NETWORK}).address)
+        console.log(bitcoin.payments.p2pkh({ pubkey: childKey0FromXpub.derivePath('m/0/0/2').publicKey, network: global.DEFAULT_NETWORK}).address)
+
+        const wrongAddressDerivationPath = 'm/1'
+        const wrongAddress = bitcoin.payments.p2pkh(
+            { pubkey: childKey0FromXpub.derivePath(wrongAddressDerivationPath).publicKey,
+            network: global.DEFAULT_NETWORK}).address
+        console.log('wrong Address', wrongAddress)
+        //1. Get unspents from this address
+        const unspentInputs = await listUnspent(wrongAddress)
+        console.log('unspents',unspentInputs.data)
+        //2. Create a transaction to a correct address with those unspents
+        const destAddressDerivationPath = 'm/0/0/1'
+        const destAddress = bitcoin.payments.p2pkh({ pubkey: childKey0FromXpub.derivePath(destAddressDerivationPath).publicKey,
+            network: global.DEFAULT_NETWORK}).address
+        console.log('destAddress',destAddress)
+
+        const changeAddressDerivationPath = 'm/0/1/0'
+        const changeAddress = bitcoin.payments.p2pkh({ pubkey: childKey0FromXpub.derivePath(changeAddressDerivationPath).publicKey,
+            network: global.DEFAULT_NETWORK}).address
+
+        console.log("changeAddress",changeAddress)
+        const amount = 6000000-500462
+        const keyPair = hdKey.derive(wrongAddressDerivationPath)
+        sendToAddress([keyPair,keyPair],destAddress,changeAddress,amount,unspentInputs.data)
     })
 });
