@@ -298,13 +298,12 @@ describe('js-doichain', function () {
         chai.assert.equal(decryptedMessage3, "http://localhost:3000/", "decrypting not successful")
     })
 
-    it('create and verify a signature ', async () => {
+    it.only('create and verify a signature ', async () => {
         function rng () {
             return Buffer.from('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
         } // get a much more secure random
 
         const keyPair = bitcoin.ECPair.makeRandom({ rng: rng })
-        keyPair.pu
         const message = "a basic test message"
         const signature = getSignature(message,keyPair)
         console.log('signature',signature)
@@ -312,6 +311,37 @@ describe('js-doichain', function () {
         console.log('address',address)
         const validSignature = verifySignature(message,address,signature)
         chai.assert.equal(true, validSignature, "signature not valid")
+
+        console.log("---- test 2")
+        const message2 = "bob@ci-doichain.orgalice@ci-doichain.org"
+        const pk = "03A3E34B6675E999F76D03B2FB309D9491E08B17A55A4B48E813883D6C0F136149"
+        const publicKeyBuffer = Buffer.from(pk, 'hex')
+        var keyPair2 = bitcoin.ECPair.fromPublicKey(publicKeyBuffer)
+        console.log(keyPair2.publicKey.toString('hex'))
+       // const { address } = bitcoin.payments.p2pkh({ pubkey: keyPair2.publicKey });
+        const address2 = bitcoin.payments.p2pkh({ pubkey: keyPair2.publicKey }).address
+        console.log('address2',address2)
+
+        const signature2 = "IBXVtYtfh/WHKvhhJ77uHoTHv/MZWs0TrHak3YOrWDWWRKSe8VAMANx2lonr4zCywhOwMDhvKBZYq0hXWdISCb8="
+        const validSignature2 = verifySignature(message2,address2,signature2)
+
+        chai.assert.equal(true, validSignature2, "signature2 not valid")
+
+        console.log("---- test 3")
+        const message3 = "e/2E2BBC5231D600AA7AEEB00ED8875BF94754B5975ED4DCF41E876B7A14DC6E5D"
+        const pk3 = "0259daba8cfd6f5e404d776da61421ffbbfb6f3720bfb00ad116f6054a31aad5b8"
+        const publicKeyBuffer3 = Buffer.from(pk3, 'hex')
+        var keyPair3 = bitcoin.ECPair.fromPublicKey(publicKeyBuffer3)
+        console.log(keyPair3.publicKey.toString('hex'))
+       // const { address } = bitcoin.payments.p2pkh({ pubkey: keyPair2.publicKey });
+        const address3 = bitcoin.payments.p2pkh({ pubkey: keyPair3.publicKey }).address
+        console.log('address3',address3)
+
+        const signature3 = "IDgLkQXbAPg6o9FayMaPt89xT8idmCLjQhYGb4gaGiFgbn4e4qjygcVTSaS2zHPAuJcwHc9UofHGV9aO4b8bDnE="
+        const validSignature3 = verifySignature(message3,address3,signature3)
+
+        chai.assert.equal(true, validSignature3, "signature3 not valid")
+
     })
 
     xit('rescue money from a wallet', async () => {
