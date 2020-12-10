@@ -299,6 +299,7 @@ describe('js-doichain', function () {
     })
 
     it.only('create and verify a signature ', async () => {
+        changeNetwork('regtest')
         function rng () {
             return Buffer.from('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
         } // get a much more secure random
@@ -328,16 +329,18 @@ describe('js-doichain', function () {
         chai.assert.equal(true, validSignature2, "signature2 not valid")
 
         console.log("---- test 3")
-        const message3 = "e/2E2BBC5231D600AA7AEEB00ED8875BF94754B5975ED4DCF41E876B7A14DC6E5D"
+        const message3 = 'IKcnDC0VTO9xi15AbXCxz71PiNXa51ptcCSx4DYkfmdNZl9jlaTyDsfD6WU+y8fxFPSTVuRM+0JTs/2eSJrJK/I='
+        const signature3 = 'HwfNLlwQq6AYqK1hhAhrqy2ZLtkMq+gUHT+ELnq9+kvMTeNiDS8Q/wPzU/JQZT0OxqjoFaRQ/4997KaR0Aly4MQ='
+        
         const pk3 = "0259daba8cfd6f5e404d776da61421ffbbfb6f3720bfb00ad116f6054a31aad5b8"
         const publicKeyBuffer3 = Buffer.from(pk3, 'hex')
         var keyPair3 = bitcoin.ECPair.fromPublicKey(publicKeyBuffer3)
         console.log(keyPair3.publicKey.toString('hex'))
        // const { address } = bitcoin.payments.p2pkh({ pubkey: keyPair2.publicKey });
-        const address3 = bitcoin.payments.p2pkh({ pubkey: keyPair3.publicKey }).address
+        const address3 = bitcoin.payments.p2pkh({ pubkey: keyPair3.publicKey,  
+            network: global.DEFAULT_NETWORK}).address
         console.log('address3',address3)
 
-        const signature3 = "IDgLkQXbAPg6o9FayMaPt89xT8idmCLjQhYGb4gaGiFgbn4e4qjygcVTSaS2zHPAuJcwHc9UofHGV9aO4b8bDnE="
         const validSignature3 = verifySignature(message3,address3,signature3)
 
         chai.assert.equal(true, validSignature3, "signature3 not valid")
