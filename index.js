@@ -27,6 +27,7 @@ import createDoichainEntry from "./lib/createDoichainEntry"
 import getPrivateKeyFromWif from "./lib/getPrivateKeyFromWif"
 import generateNameId from "./lib/generateNameId"
 import verify from "./lib/verify"
+import getBalance from "./lib/getBalance"
 
 export {
     constants,
@@ -57,5 +58,6 @@ export {
     createDoichainEntry,
     getPrivateKeyFromWif,
     generateNameId,
-    verify
+    verify,
+    getBalance
 }
