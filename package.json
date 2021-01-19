@@ -43,6 +43,7 @@
     "bs58": "^4.0.1",
     "crypto-js": "^4.0.0",
     "eciesjs": "^0.3.6",
+    "electrum-mnemonic": "^2.0.0",
     "hdkey": "^1.1.1",
     "node-fetch": "^2.6.0",
     "satoshi-bitcoin": "^1.0.4",

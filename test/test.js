@@ -19,6 +19,7 @@ import {getAddress} from "../lib/getAddress"
 import {changeNetwork, DEFAULT_NETWORK, DOICHAIN_REGTEST, DOICHAIN_TESTNET, DOICHAIN} from "../lib/network"
 import {fundWallet} from "../lib/fundWallet";
 import {listTransactions} from "../lib/listTransactions"
+import {listTransactionsElectrum} from "../lib/listTransactionsElectrum"
 import {listUnspent} from "../lib/listUnspent";
 import {getBalanceOfWallet} from "../lib/getBalanceOfWallet";
 import {getBalanceOfAddresses} from "../lib/getBalanceOfAddresses"
@@ -43,6 +44,23 @@ const PASSWORD = "julianAssange2020"
 describe('js-doichain', function () {
     this.timeout(0);
     describe('basic doichain functions', function () {
+
+        
+        it('should log listtransactions content', function () {
+            changeNetwork('mainnet')
+            const address = "NJHArPJUknmNBL42ns6k61XApnAYzrRkow"
+            let listTransaction = listTransactions(address)
+            console.log(listTransaction)
+
+            listTransaction.then(result => {
+                console.log(result)
+            })
+        })
+        it('should log listtransactionsElectrum content', function () {
+            const address = "NJHArPJUknmNBL42ns6k61XApnAYzrRkow"
+            let listTransactionElectrum = listTransactionsElectrum(address, DOICHAIN)
+            console.log(listTransactionElectrum)
+        })
 
         it('should create a new mnemonic seed phrase', function () {
             const mnemonic = generateMnemonic()
@@ -85,7 +103,7 @@ describe('js-doichain', function () {
             chai.expect(wallet.addresses[0].address.substring(0,1)).to.not.be.uppercase
         })
 
-        it.only('should fund the basic regtest wallet with 10 DOI ', async () => {
+        it('should fund the basic regtest wallet with 10 DOI ', async () => {
             changeNetwork('regtest')
             const hdKey = createHdKeyFromMnemonic(MNEMONIC)
             const xpubMaster = bitcoin.bip32.fromBase58(hdKey.publicExtendedKey)
@@ -298,7 +316,7 @@ describe('js-doichain', function () {
         chai.assert.equal(decryptedMessage3, "http://localhost:3000/", "decrypting not successful")
     })
 
-    it.only('create and verify a signature ', async () => {
+    it('create and verify a signature ', async () => {
         changeNetwork('regtest')
         function rng () {
             return Buffer.from('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
