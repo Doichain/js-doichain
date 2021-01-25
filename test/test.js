@@ -51,10 +51,6 @@ describe('js-doichain', function () {
             const address = "NJHArPJUknmNBL42ns6k61XApnAYzrRkow"
             let listTransaction = await listTransactions(address)
             console.log(listTransaction)
-
-            // listTransaction.then(result => {
-            //     console.log(result)
-            // })
         })
         it.only('should log listtransactionsElectrum content', async function () {
             const address = "NJHArPJUknmNBL42ns6k61XApnAYzrRkow"
