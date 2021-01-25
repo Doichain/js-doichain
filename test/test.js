@@ -19,7 +19,6 @@ import {getAddress} from "../lib/getAddress"
 import {changeNetwork, DEFAULT_NETWORK, DOICHAIN_REGTEST, DOICHAIN_TESTNET, DOICHAIN} from "../lib/network"
 import {fundWallet} from "../lib/fundWallet";
 import {listTransactions} from "../lib/listTransactions"
-import {listTransactionsElectrum} from "../lib/listTransactionsElectrum"
 import {listUnspent} from "../lib/listUnspent";
 import {getBalanceOfWallet} from "../lib/getBalanceOfWallet";
 import {getBalanceOfAddresses} from "../lib/getBalanceOfAddresses"
@@ -45,16 +44,16 @@ describe('js-doichain', function () {
     this.timeout(0);
     describe('basic doichain functions', function () {
 
-        
-        it.only('should log listtransactions content', async function () {
+    /*    it.only('should log listtransactions content', async function () {
             changeNetwork('mainnet')
             const address = "NJHArPJUknmNBL42ns6k61XApnAYzrRkow"
             let listTransaction = await listTransactions(address)
             console.log(listTransaction)
-        })
+        }) */
         it.only('should log listtransactionsElectrum content', async function () {
-            const address = "NJHArPJUknmNBL42ns6k61XApnAYzrRkow"
-            let listTransactionElectrum = await listTransactionsElectrum(address, DOICHAIN)
+            //const address = "NJHArPJUknmNBL42ns6k61XApnAYzrRkow"
+            const address = "N4PcsgPFjzhgTZqBXYvtHkiDjZ3ft3us1i"
+            let listTransactionElectrum = await listTransactions(address, DOICHAIN)
             console.log(listTransactionElectrum)
         })
 
