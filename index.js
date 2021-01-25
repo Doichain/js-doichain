@@ -28,6 +28,8 @@ import getPrivateKeyFromWif from "./lib/getPrivateKeyFromWif"
 import generateNameId from "./lib/generateNameId"
 import verify from "./lib/verify"
 import getBalance from "./lib/getBalance"
+import {isOurAddress} from './lib/isOurAddress'
+import {isOurChangeAddress} from './lib/isOurChangeAddress'
 
 export {
     constants,
@@ -59,5 +61,7 @@ export {
     getPrivateKeyFromWif,
     generateNameId,
     verify,
-    getBalance
+    getBalance,
+    isOurAddress,
+    isOurChangeAddress
 }
