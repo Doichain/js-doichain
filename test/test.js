@@ -46,14 +46,16 @@ describe('js-doichain', function () {
     describe('basic doichain functions', function () {
 
         
-        it.only('should log listtransactions content', async function () {
+        it('should log listtransactions content', async function () {
             changeNetwork('mainnet')
             const address = "NJHArPJUknmNBL42ns6k61XApnAYzrRkow"
+            // const address = "N4PcsgPFjzhgTZqBXYvtHkiDjZ3ft3us1i"
             let listTransaction = await listTransactions(address)
             console.log(listTransaction)
         })
-        it.only('should log listtransactionsElectrum content', async function () {
+        it('should log listtransactionsElectrum content', async function () {
             const address = "NJHArPJUknmNBL42ns6k61XApnAYzrRkow"
+            // const address = "N2BAT6xNGYjP6Gvx3MyopNZYfHtFp1ptcZ"
             let listTransactionElectrum = await listTransactionsElectrum(address, DOICHAIN)
             console.log(listTransactionElectrum)
         })
