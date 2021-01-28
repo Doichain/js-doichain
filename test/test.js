@@ -50,9 +50,23 @@ describe('js-doichain', function () {
             let listTransaction = await listTransactions(address)
             console.log(listTransaction)
         }) */
-        it.only('should log listtransactionsElectrum content', async function () {
+
+        it.only('should get a transactions input', async function () {
+            const ElectrumClient = require('@codewarriorr/electrum-client-js')
+            const client = new ElectrumClient("demo30122020.doi.works", 50002, "tls");
+            await client.connect(
+                "electrum-client-js", // optional client name
+                "1.4.2" // optional protocol version
+            )
+            const txid = "bed2d384dc8a304ab20f4e1282958171052fbc4265fefae7d9231b491c5216a4"
+            const transaction = await client.blockchain_transaction_get(txid);
+            const decryptedTx = bitcoin.Transaction.fromHex(transaction);
+
+            console.log("decrypted tx", decryptedTx)
+        })
+        it('should log listtransactionsElectrum content', async function () {
             //const address = "NJHArPJUknmNBL42ns6k61XApnAYzrRkow"
-            const address = "N4PcsgPFjzhgTZqBXYvtHkiDjZ3ft3us1i"
+            const address = "bc1q7vtcp3gas4k54y5xtmg2dl7dw599s4wdqha78y"
             let listTransactionElectrum = await listTransactions(address, DOICHAIN)
             console.log(listTransactionElectrum)
         })
