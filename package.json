@@ -34,6 +34,7 @@
     "mocha": "^7.1.1"
   },
   "dependencies": {
+    "@codewarriorr/electrum-client-js": "^0.1.1",
     "binstring": "^0.2.1",
     "bip39": "^3.0.2",
     "bitcoinjs-lib": "^5.1.8",

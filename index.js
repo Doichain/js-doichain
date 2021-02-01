@@ -18,7 +18,7 @@ import encryptMessage from "./lib/encryptMessage"
 import getDataHash from "./lib/getDataHash"
 import getSignature from "./lib/getSignature"
 import verifySignature from "./lib/verifySignature"
-import { generateKeyPairFromHdKey } from "./lib/generateKeyPairFromHdKey"
+import {generateKeyPairFromHdKey} from "./lib/generateKeyPairFromHdKey"
 import encryptTemplate from "./lib/encryptTemplate"
 import {getServerStatus} from "./lib/getServerStatus";
 import encryptStandardECIES from "./lib/encryptStandardECIES"
@@ -28,36 +28,42 @@ import getPrivateKeyFromWif from "./lib/getPrivateKeyFromWif"
 import generateNameId from "./lib/generateNameId"
 import verify from "./lib/verify"
 import getBalance from "./lib/getBalance"
+import generateSegwitAddress from "./lib/generateSegwitAddress"
+import getInputAddress from "./lib/getInputAddress";
+import hashRateFormat from "./lib/hashRateFormat"
 
 export {
-    constants,
-    network,
-    getAddress,
-    createHdKeyFromMnemonic,
-    restoreDoichainWalletFromHdKey,
-    listTransactions,
-    listUnspent,
-    getBalanceOfAddresses,
-    getBalanceOfWallet,
-    decryptAES,
-    encryptAES,
-    getUnspents,
-    sendToAddress,
-    updateWalletWithUnconfirmedUtxos,
-    createAndSendTransaction,
-    getValidatorPublicKeyOfEmail,
-    encryptMessage,
-    getDataHash,
-    getSignature,
-    verifySignature,
-    generateKeyPairFromHdKey,
-    encryptTemplate,
-    getServerStatus,
-    encryptStandardECIES,
-    decryptStandardECIES,
-    createDoichainEntry,
-    getPrivateKeyFromWif,
-    generateNameId,
-    verify,
-    getBalance
-}
+  constants,
+  network,
+  getAddress,
+  createHdKeyFromMnemonic,
+  restoreDoichainWalletFromHdKey,
+  listTransactions,
+  listUnspent,
+  getBalanceOfAddresses,
+  getBalanceOfWallet,
+  decryptAES,
+  encryptAES,
+  getUnspents,
+  sendToAddress,
+  updateWalletWithUnconfirmedUtxos,
+  createAndSendTransaction,
+  getValidatorPublicKeyOfEmail,
+  encryptMessage,
+  getDataHash,
+  getSignature,
+  verifySignature,
+  generateKeyPairFromHdKey,
+  encryptTemplate,
+  getServerStatus,
+  encryptStandardECIES,
+  decryptStandardECIES,
+  createDoichainEntry,
+  getPrivateKeyFromWif,
+  generateNameId,
+  verify,
+  getBalance,
+  generateSegwitAddress,
+  getInputAddress,
+  hashRateFormat,
+};
