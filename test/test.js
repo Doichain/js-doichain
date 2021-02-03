@@ -25,7 +25,8 @@ import {getBalanceOfAddresses} from "../lib/getBalanceOfAddresses"
 import {createNewWallet} from "../lib/createNewWallet";
 import {encryptAES} from "../lib/encryptAES";
 import {decryptAES} from "../lib/decryptAES";
-import {generateNewAddress} from '../lib/generateNewAddress';
+import {generateNewAddress} from '../lib/generateNewAddress'
+import {generateNewBech32Address} from "../lib/generateSegwitAddress"
 import {sendToAddress} from "../lib/sendToAddress"
 import {getUnspents} from "../lib/getUnspents"
 import {updateWalletWithUnconfirmedUtxos} from "../lib/updateWalletWithUnconfirmedUtxos"
@@ -35,6 +36,9 @@ import getPrivateKeyFromWif from "../lib/getPrivateKeyFromWif"
 import getSignature from "../lib/getSignature"
 import verifySignature from "../lib/verifySignature"
 import createAndSendTransaction from "../lib/createAndSendTransaction"
+import getInputAddress from "../lib/getInputAddress"
+import generateSegwitAddress from "../lib/generateSegwitAddress"
+import hashRateFormat from "../lib/hashRateFormat"
 
 const MNEMONIC = "refuse brush romance together undo document tortoise life equal trash sun ask"
 const MNEMONIC2 = "balance blanket camp festival party robot social stairs noodle piano copy drastic"
@@ -42,9 +46,60 @@ const PASSWORD = "julianAssange2020"
 
 describe('js-doichain', function () {
     this.timeout(0);
-    describe('basic doichain functions', function () {
+    describe('basic doichain functions', function () {     
 
-        it('should create a new mnemonic seed phrase', function () {
+        it("generate a address ", async function () {
+
+           let publicExtendedKey = ''
+            if (publicExtendedKey === "")
+              console.error("please add publicExtendedKey");
+           // const address = getAddress(publicExtendedKey);
+           let addressArray = []
+           let derivationPathOut 
+           let derivationPathIn
+           let network =  bitcoin.networks.bitcoin
+         
+           for (let i = 0; i < 1000; i++) {
+             derivationPathOut = "0/" + i 
+             derivationPathIn = "1/" + i            
+
+             const newAddressOut = generateSegwitAddress(
+               publicExtendedKey,
+               derivationPathOut,
+               network
+             );
+
+             const newAddressIn = generateSegwitAddress(
+               publicExtendedKey,
+               derivationPathIn,
+               network
+             );
+
+             if("bc1q7vtcp3gas4k54y5xtmg2dl7dw599s4wdqha78y" == newAddressOut ){
+                 console.log("_test", "bc1q7vtcp3gas4k54y5xtmg2dl7dw599s4wdqha78y")
+             }
+
+             addressArray[i] = newAddressOut;
+             addressArray[1000 + i] = newAddressIn;
+           }
+           console.log("__addresses", addressArray)
+           //chai.assert(Array.isArray(addressArray), " addressArray is empty"); 
+        })
+
+        it("getInputAddress ", async function () {
+          let inputAddress = await getInputAddress(
+            "bc1q7vtcp3gas4k54y5xtmg2dl7dw599s4wdqha78y"
+          )
+         // console.log("input address", inputAddress);
+          chai.assert(Array.isArray(inputAddress), " inputAddress is empty")  
+        })
+
+        it("hashRateFormat ", async function () {          
+          // console.log("hashRateFormat", hashRateFormat(435643643643643634))
+          chai.assert.exists(hashRateFormat(435643643643643634), " hashRateFormat is empty");
+        });
+
+        it('should create a new mnemonic seed phrase', function () {            
             const mnemonic = generateMnemonic()
             chai.assert.equal(mnemonic.split(' ').length, 12, 'mnemonic doesnt contain 12 words')
         })
@@ -86,7 +141,7 @@ describe('js-doichain', function () {
         })
 
         it.only('should fund the basic regtest wallet with 10 DOI ', async () => {
-            changeNetwork('regtest')
+            changeNetwork('regtest')           
             const hdKey = createHdKeyFromMnemonic(MNEMONIC)
             const xpubMaster = bitcoin.bip32.fromBase58(hdKey.publicExtendedKey)
 
@@ -264,13 +319,7 @@ describe('js-doichain', function () {
         var keyPair = bitcoin.ECPair.fromWIF(wif,DOICHAIN_REGTEST)
         var publicKey = keyPair.publicKey.toString('hex')
 
-      /*  function rng () {
-            return Buffer.from('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
-        } // get a much more secure random
-
-        const keyPair = bitcoin.ECPair.makeRandom({ rng: rng })
-        const { address } = bitcoin.payments.p2pkh({ pubkey: keyPair.publicKey })
-        //console.log("address " + address) // 17wqX8P6kz6DrDRQfdJ9KeqUTRmgh1NzSk*/
+      
       //  var publicKey = keyPair.publicKey.toString('hex')
         console.log("public key " + publicKey) // 0279bf075bae171835513be1056f224f94f3915f9999a3faea1194d97b54397219
 
