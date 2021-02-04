@@ -19,7 +19,6 @@ import {getAddress} from "../lib/getAddress"
 import {changeNetwork, DEFAULT_NETWORK, DOICHAIN_REGTEST, DOICHAIN_TESTNET, DOICHAIN} from "../lib/network"
 import {fundWallet} from "../lib/fundWallet";
 import {listTransactions} from "../lib/listTransactions"
-import {listTransactionsElectrum} from "../lib/listTransactionsElectrum"
 import {listUnspent} from "../lib/listUnspent";
 import {getBalanceOfWallet} from "../lib/getBalanceOfWallet";
 import {getBalanceOfAddresses} from "../lib/getBalanceOfAddresses"
@@ -45,20 +44,33 @@ describe('js-doichain', function () {
     this.timeout(0);
     describe('basic doichain functions', function () {
 
-        
-        it('should log listtransactions content', async function () {
+    /*    it.only('should log listtransactions content', async function () {
             changeNetwork('mainnet')
             const address = "NJHArPJUknmNBL42ns6k61XApnAYzrRkow"
             let listTransaction = await listTransactions(address)
             console.log(listTransaction)
+        }) */
 
-            // listTransaction.then(result => {
-            //     console.log(result)
-            // })
+        it.only('should get a transactions input', async function () {
+            const ElectrumClient = require('@codewarriorr/electrum-client-js')
+            const client = new ElectrumClient("demo30122020.doi.works", 50002, "tls");
+            await client.connect(
+                "electrum-client-js", // optional client name
+                "1.4.2" // optional protocol version
+            )
+            const history = await client.blockchain_scripthash_getHistory(
+                reversedHash.toString("hex")
+            )
+            const txid = "bed2d384dc8a304ab20f4e1282958171052fbc4265fefae7d9231b491c5216a4"
+            const transaction = await client.blockchain_transaction_get(txid);
+            const decryptedTx = bitcoin.Transaction.fromHex(transaction);
+
+            console.log("decrypted tx", decryptedTx)
         })
         it('should log listtransactionsElectrum content', async function () {
-            const address = "NJHArPJUknmNBL42ns6k61XApnAYzrRkow"
-            let listTransactionElectrum = await listTransactionsElectrum(address, DOICHAIN)
+            //const address = "NJHArPJUknmNBL42ns6k61XApnAYzrRkow"
+            const address = "bc1q7vtcp3gas4k54y5xtmg2dl7dw599s4wdqha78y"
+            let listTransactionElectrum = await listTransactions(address, DOICHAIN)
             console.log(listTransactionElectrum)
         })
 
