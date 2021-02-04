@@ -58,9 +58,12 @@ describe('js-doichain', function () {
                 "electrum-client-js", // optional client name
                 "1.4.2" // optional protocol version
             )
+<<<<<<< HEAD
             const history = await client.blockchain_scripthash_getHistory(
                 reversedHash.toString("hex")
             )
+=======
+>>>>>>> e619c70 (minor unfinished changes)
             const txid = "bed2d384dc8a304ab20f4e1282958171052fbc4265fefae7d9231b491c5216a4"
             const transaction = await client.blockchain_transaction_get(txid);
             const decryptedTx = bitcoin.Transaction.fromHex(transaction);
