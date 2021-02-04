@@ -11,12 +11,12 @@ chai.Assertion.addProperty('uppercase', function () {
         , 'expected #{this} to not be all uppercase'  // error message when fail for negated
     );
 });
+
 import {generateMnemonic} from '../lib/generateMnemonic'
 import {validateMnemonic} from "../lib/validateMnemonic";
 import {createHdKeyFromMnemonic} from "../lib/createHdKeyFromMnemonic"
 import {restoreDoichainWalletFromHdKey, noEmailError} from "../lib/restoreDoichainWalletFromHdKey"
 import {getAddress} from "../lib/getAddress"
-import {changeNetwork, DEFAULT_NETWORK, DOICHAIN_REGTEST, DOICHAIN_TESTNET, DOICHAIN} from "../lib/network"
 import {fundWallet} from "../lib/fundWallet";
 import {listTransactions} from "../lib/listTransactions"
 import {listUnspent} from "../lib/listUnspent";
@@ -39,6 +39,8 @@ import createAndSendTransaction from "../lib/createAndSendTransaction"
 import getInputAddress from "../lib/getInputAddress"
 import generateSegwitAddress from "../lib/generateSegwitAddress"
 import hashRateFormat from "../lib/hashRateFormat"
+import { listTransactionsElectrum } from '../lib/listTransactionsElectrum'
+import { DOICHAIN } from '../lib/network'
 
 const MNEMONIC = "refuse brush romance together undo document tortoise life equal trash sun ask"
 const MNEMONIC2 = "balance blanket camp festival party robot social stairs noodle piano copy drastic"
@@ -94,14 +96,57 @@ describe('js-doichain', function () {
           chai.assert(Array.isArray(inputAddress), " inputAddress is empty")  
         })
 
+
         it("hashRateFormat ", async function () {          
           // console.log("hashRateFormat", hashRateFormat(435643643643643634))
           chai.assert.exists(hashRateFormat(435643643643643634), " hashRateFormat is empty");
         });
 
-        it('should create a new mnemonic seed phrase', function () {            
+                  
+
+    /*    it.only('should log listtransactions content', async function () {
+            changeNetwork('mainnet')
+            const address = "NJHArPJUknmNBL42ns6k61XApnAYzrRkow"
+            let listTransaction = await listTransactions(address)
+            console.log(listTransaction)
+        }) */
+
+        it('should get a transactions input', async function () {
+
+            const address = "NHxC3bjnmYE4HGwJCL2D56KuuCCpvtHUKZ" //NHxC3bjnmYE4HGwJCL2D56KuuCCpvtHUKZ
+            const settings = {
+                electrumHost: "demo30122020.doi.works",
+                electrumPort: "50002",
+                electrumSSL: "tls"
+            }
+            const options = { network: DOICHAIN, settings }
+            let listDOITransactionElectrum = await listTransactionsElectrum(address,options)
+            console.log("listDOITransactionElectrum", listDOITransactionElectrum)
+            chai.assert.equal(listDOITransactionElectrum.length, 3, 'in the past we had here always 3 output '+address) 
+
+            //contains name_doi transactions!
+           /* const address2 = "NHxC3bjnmYE4HGwJCL2D56KuuCCpvtHUKZ" ; 
+            const options2 = { network: DOICHAIN, settings }
+            let listDOITransactionElectrum2 = await listTransactionsElectrum(address2,options2)
+            console.log("listDOITransactionElectrum", listDOITransactionElectrum2)
+            chai.assert.equal(listDOITransactionElectrum2.length, 3, 'in the past we had here always 3 outputs '+address2)*/
+            
+        })
+
+        it.only('should log listtransactionsElectrum content', async function () {
+         
+            const address = "bc1q7vtcp3gas4k54y5xtmg2dl7dw599s4wdqha78y"
+            let listBTCTransactionElectrum = await listTransactionsElectrum(address,{network:bitcoin.networks.bitcoin})
+            //console.log(listTransactionElectrum[0])
+            chai.assert.equal(listBTCTransactionElectrum.length, 1, 'in the past we had here always 1 output')
+            //chai.assert.equal(listTransactionElectrum[0].satoshi, 16393033, 'that is the change money')
+            chai.assert.equal(listBTCTransactionElectrum[0].satoshi, 88134, 'this is a btcpay server payment for a p2pool node')
+        })
+
+        it('should create a new mnemonic seed phrase', function () {
+
             const mnemonic = generateMnemonic()
-            chai.assert.equal(mnemonic.split(' ').length, 12, 'mnemonic doesnt contain 12 words')
+            chai.assert.equal(mnemonic.split(' ').length, 12, 'mnemonic doesn´t contain 12 words')
         })
 
         it('should validate a mnemonic seed phrase', function () {
@@ -140,8 +185,10 @@ describe('js-doichain', function () {
             chai.expect(wallet.addresses[0].address.substring(0,1)).to.not.be.uppercase
         })
 
-        it.only('should fund the basic regtest wallet with 10 DOI ', async () => {
-            changeNetwork('regtest')           
+
+        it('should fund the basic regtest wallet with 10 DOI ', async () => {
+            changeNetwork('regtest')
+
             const hdKey = createHdKeyFromMnemonic(MNEMONIC)
             const xpubMaster = bitcoin.bip32.fromBase58(hdKey.publicExtendedKey)
 
@@ -347,7 +394,7 @@ describe('js-doichain', function () {
         chai.assert.equal(decryptedMessage3, "http://localhost:3000/", "decrypting not successful")
     })
 
-    it.only('create and verify a signature ', async () => {
+    it('create and verify a signature ', async () => {
         changeNetwork('regtest')
         function rng () {
             return Buffer.from('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
