@@ -11,12 +11,12 @@ chai.Assertion.addProperty('uppercase', function () {
         , 'expected #{this} to not be all uppercase'  // error message when fail for negated
     );
 });
+
 import {generateMnemonic} from '../lib/generateMnemonic'
 import {validateMnemonic} from "../lib/validateMnemonic";
 import {createHdKeyFromMnemonic} from "../lib/createHdKeyFromMnemonic"
 import {restoreDoichainWalletFromHdKey, noEmailError} from "../lib/restoreDoichainWalletFromHdKey"
 import {getAddress} from "../lib/getAddress"
-import {changeNetwork, DEFAULT_NETWORK, DOICHAIN_REGTEST, DOICHAIN_TESTNET, DOICHAIN} from "../lib/network"
 import {fundWallet} from "../lib/fundWallet";
 import {listTransactions} from "../lib/listTransactions"
 import {listUnspent} from "../lib/listUnspent";
@@ -35,6 +35,8 @@ import getPrivateKeyFromWif from "../lib/getPrivateKeyFromWif"
 import getSignature from "../lib/getSignature"
 import verifySignature from "../lib/verifySignature"
 import createAndSendTransaction from "../lib/createAndSendTransaction"
+import { listTransactionsElectrum } from '../lib/listTransactionsElectrum';
+import { DOICHAIN } from '../lib/network';
 
 const MNEMONIC = "refuse brush romance together undo document tortoise life equal trash sun ask"
 const MNEMONIC2 = "balance blanket camp festival party robot social stairs noodle piano copy drastic"
@@ -52,34 +54,39 @@ describe('js-doichain', function () {
         }) */
 
         it.only('should get a transactions input', async function () {
-            const ElectrumClient = require('@codewarriorr/electrum-client-js')
-            const client = new ElectrumClient("demo30122020.doi.works", 50002, "tls");
-            await client.connect(
-                "electrum-client-js", // optional client name
-                "1.4.2" // optional protocol version
-            )
-<<<<<<< HEAD
-            const history = await client.blockchain_scripthash_getHistory(
-                reversedHash.toString("hex")
-            )
-=======
->>>>>>> e619c70 (minor unfinished changes)
-            const txid = "bed2d384dc8a304ab20f4e1282958171052fbc4265fefae7d9231b491c5216a4"
-            const transaction = await client.blockchain_transaction_get(txid);
-            const decryptedTx = bitcoin.Transaction.fromHex(transaction);
 
-            console.log("decrypted tx", decryptedTx)
+            const address = "NHxC3bjnmYE4HGwJCL2D56KuuCCpvtHUKZ" //NHxC3bjnmYE4HGwJCL2D56KuuCCpvtHUKZ
+            const settings = {
+                electrumHost: "demo30122020.doi.works",
+                electrumPort: "50002",
+                electrumSSL: "tls"
+            }
+            const options = { network: DOICHAIN, settings }
+            let listDOITransactionElectrum = await listTransactionsElectrum(address,options)
+            console.log("listDOITransactionElectrum", listDOITransactionElectrum)
+            chai.assert.equal(listDOITransactionElectrum.length, 3, 'in the past we had here always 3 output '+address) 
+
+            //contains name_doi transactions!
+           /* const address2 = "NHxC3bjnmYE4HGwJCL2D56KuuCCpvtHUKZ" ; 
+            const options2 = { network: DOICHAIN, settings }
+            let listDOITransactionElectrum2 = await listTransactionsElectrum(address2,options2)
+            console.log("listDOITransactionElectrum", listDOITransactionElectrum2)
+            chai.assert.equal(listDOITransactionElectrum2.length, 3, 'in the past we had here always 3 outputs '+address2)*/
+            
         })
         it('should log listtransactionsElectrum content', async function () {
-            //const address = "NJHArPJUknmNBL42ns6k61XApnAYzrRkow"
+         
             const address = "bc1q7vtcp3gas4k54y5xtmg2dl7dw599s4wdqha78y"
-            let listTransactionElectrum = await listTransactions(address, DOICHAIN)
-            console.log(listTransactionElectrum)
+            let listBTCTransactionElectrum = await listTransactionsElectrum(address,{network:bitcoin.networks.bitcoin})
+            //console.log(listTransactionElectrum[0])
+            chai.assert.equal(listBTCTransactionElectrum.length, 1, 'in the past we had here always 1 output')
+            //chai.assert.equal(listTransactionElectrum[0].satoshi, 16393033, 'that is the change money')
+            chai.assert.equal(listBTCTransactionElectrum[0].satoshi, 88134, 'this is a btcpay server payment for a p2pool node')
         })
 
         it('should create a new mnemonic seed phrase', function () {
             const mnemonic = generateMnemonic()
-            chai.assert.equal(mnemonic.split(' ').length, 12, 'mnemonic doesnt contain 12 words')
+            chai.assert.equal(mnemonic.split(' ').length, 12, 'mnemonic doesn´t contain 12 words')
         })
 
         it('should validate a mnemonic seed phrase', function () {
