@@ -53,7 +53,7 @@ describe('js-doichain', function () {
             console.log(listTransaction)
         }) */
 
-        it.only('should get a transactions input', async function () {
+        it('should get a transactions input', async function () {
 
             const address = "NHxC3bjnmYE4HGwJCL2D56KuuCCpvtHUKZ" //NHxC3bjnmYE4HGwJCL2D56KuuCCpvtHUKZ
             const settings = {
@@ -74,7 +74,8 @@ describe('js-doichain', function () {
             chai.assert.equal(listDOITransactionElectrum2.length, 3, 'in the past we had here always 3 outputs '+address2)*/
             
         })
-        it('should log listtransactionsElectrum content', async function () {
+
+        it.only('should log listtransactionsElectrum content', async function () {
          
             const address = "bc1q7vtcp3gas4k54y5xtmg2dl7dw599s4wdqha78y"
             let listBTCTransactionElectrum = await listTransactionsElectrum(address,{network:bitcoin.networks.bitcoin})
