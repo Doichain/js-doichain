@@ -29,8 +29,9 @@ import generateNameId from "./lib/generateNameId"
 import verify from "./lib/verify"
 import getBalance from "./lib/getBalance"
 import generateSegwitAddress from "./lib/generateSegwitAddress"
-import getInputAddress from "./lib/getInputAddress";
+import getInputAddress from "./lib/getInputAddress"
 import hashRateFormat from "./lib/hashRateFormat"
+import isExistingAddress from "./lib/isExistingAddress"
 
 export {
   constants,
@@ -66,4 +67,5 @@ export {
   generateSegwitAddress,
   getInputAddress,
   hashRateFormat,
-};
+  isExistingAddress,
+}
